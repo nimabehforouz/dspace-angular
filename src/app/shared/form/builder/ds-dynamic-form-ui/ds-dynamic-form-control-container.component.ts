@@ -1,8 +1,6 @@
 import {
   AsyncPipe,
   NgClass,
-  NgForOf,
-  NgIf,
   NgTemplateOutlet,
 } from '@angular/common';
 import {
@@ -98,9 +96,11 @@ import {
   getRemoteDataPayload,
 } from '../../../../core/shared/operators';
 import { SubmissionObject } from '../../../../core/submission/models/submission-object.model';
+import { SUBMISSION_LINKS_TO_FOLLOW } from '../../../../core/submission/resolver/submission-links-to-follow';
 import { SubmissionObjectDataService } from '../../../../core/submission/submission-object-data.service';
 import { paginatedRelationsToItems } from '../../../../item-page/simple/item-types/shared/item-relationships-utils';
 import { SubmissionService } from '../../../../submission/submission.service';
+import { BtnDisabledDirective } from '../../../btn-disabled.directive';
 import {
   hasNoValue,
   hasValue,
@@ -131,17 +131,16 @@ import { DsDynamicLookupRelationModalComponent } from './relation-lookup-modal/d
   templateUrl: './ds-dynamic-form-control-container.component.html',
   changeDetection: ChangeDetectionStrategy.Default,
   imports: [
-    ExistingMetadataListElementComponent,
-    NgIf,
-    NgClass,
     AsyncPipe,
-    TranslateModule,
-    ReactiveFormsModule,
-    NgForOf,
+    BtnDisabledDirective,
+    ExistingMetadataListElementComponent,
+    ExistingRelationListElementComponent,
     FormsModule,
     NgbTooltipModule,
+    NgClass,
     NgTemplateOutlet,
-    ExistingRelationListElementComponent,
+    ReactiveFormsModule,
+    TranslateModule,
   ],
   standalone: true,
 })
@@ -452,7 +451,7 @@ export class DsDynamicFormControlContainerComponent extends DynamicFormControlCo
    */
   private setItem() {
     const submissionObject$ = this.submissionObjectService
-      .findById(this.model.submissionId, true, true, followLink('item'), followLink('collection')).pipe(
+      .findById(this.model.submissionId, true, true, ...SUBMISSION_LINKS_TO_FOLLOW).pipe(
         getAllSucceededRemoteData(),
         getRemoteDataPayload(),
       );
